@@ -1,0 +1,48 @@
+== Solr Feeder
+
+Little script to feed documents to Solr from a set of files.
+
+== Example
+
+require 'feeder'
+require 'hpricot'
+
+feeder = Feeder.new(ARGV)
+feeder.feed do |filepath|
+
+  xml = open(filepath) { |f| Hpricot.XML(f) }
+
+  # id and url
+  id = xml.search('ARTICLE/ARTICLEURL').first.to_plain_text
+  add 'id', id
+
+  add 'text', xml.search('ARTICLE/BODY').first.to_plain_text
+  add 'title', xml.search('ARTICLE/HEADLINE').first.to_plain_text
+
+end
+
+Save this as articles.rb and call with these arguments:
+ruby articles.rb --dir /path/to/articles --core test --port 8983 --host localhost
+
+This will send a maximum of a 100 files to the Solr instance running on localhost:8983 and core test.
+
+Each of the file will be processed by the block in articles.rb. The files can be whatever you like
+since you control the parsing of those files.
+
+A commit to Solr is sent when all files are processed. You can also choose to send a commit
+at a specified interval of documents.
+
+Within the block, you have access to an '''add''' method which allows to add a field to the document
+that will be sent to Solr. The first parameter to '''add''' is the name of the field.
+The second one is the value of the value. For now, it must be a String.
+
+== Command-line options
+* [--dir] Directory where the files to process are. Mandatory
+* [--core CORE] Solr core to use. Mandatory
+* [--host HOST] Solr host to connect to. Default to 'localhost'
+* [--port PORT] Solr port on host. Default to '8983'
+* [--max NUM] Max files to process from dir. Optional
+* [--commit NUM] Send a commit at each nth file. Optional
+
+== Requirements
+* rsolr
