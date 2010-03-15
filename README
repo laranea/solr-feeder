@@ -1,4 +1,4 @@
-== Solr Feeder
+= Solr Feeder
 
 Little script to feed documents to Solr from a set of files.
 
@@ -24,7 +24,7 @@ end
 Save this as articles.rb and call with these arguments:
 ruby articles.rb --dir /path/to/articles --core test --port 8983 --host localhost
 
-This will send a maximum of a 100 files to the Solr instance running on localhost:8983 and core test.
+This will all files from dir to the Solr instance running on localhost:8983 and core test.
 
 Each of the file will be processed by the block in articles.rb. The files can be whatever you like
 since you control the parsing of those files.
