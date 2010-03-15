@@ -3,3 +3,4 @@ Rakefile
 nbproject/*
 spec/*
 test/*
+doc/*
