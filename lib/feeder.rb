@@ -5,21 +5,6 @@ require 'optparse'
 require 'ostruct'
 require 'rsolr'
 
-# see http://www.ruby-forum.com/topic/54096
-class Object
-  def instance_exec(*args, &block)
-    mname = "__instance_exec_#{Thread.current.object_id.abs}"
-    class << self; self end.class_eval{ define_method(mname, &block) }
-    begin
-      ret = send(mname, *args)
-    ensure
-      class << self; self end.class_eval{ undef_method(mname) } rescue
-      nil
-    end
-    ret
-  end
-end
-
 class Feeder
   def initialize(arguments)
     
@@ -80,13 +65,15 @@ class Feeder
     url = "http://#{@options.host}:#{@options.port}/solr/#{@options.core}"
     puts "Connecting to #{url}"
     @solr = RSolr.connect :url=> url
-    @fields = {}
 
     n = 0
     total = 0
     Dir.foreach(@options.folder) do |filename|
       next if filename == '.' or filename == '..'
 
+      @fields = {}
+      @params = {}
+    
       filepath = "#{@options.folder}/#{filename}"
       instance_exec(filepath, &block) if block.is_a? Proc
 
@@ -113,17 +100,19 @@ class Feeder
       @solr.commit
     end
     
-    puts "#{total} documents sent. Feeder complete"
+    puts "#{total} documents sent. Feed complete"
   end
 
-  def add(field, value)
+  def add_field(field, value)
     @fields[field] = value
   end
 
+  def add_param(param, value)
+    @params[param] = value
+  end
+
   def send_to_solr
-    params = {}
-    # TODO add a command-line options to pass url parameters
     message = @solr.message
-    @solr.update(message.add(@fields), params)
+    @solr.update(message.add(@fields), @params)
   end
 end

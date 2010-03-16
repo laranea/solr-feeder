@@ -14,17 +14,18 @@ Little script to feed documents to Solr from a set of files.
 
      # id and url
      id = xml.search('ARTICLE/ARTICLEURL').first.to_plain_text
-     add 'id', id
+     add_field 'id', id
 
-     add 'text', xml.search('ARTICLE/BODY').first.to_plain_text
-     add 'title', xml.search('ARTICLE/HEADLINE').first.to_plain_text
+     add_field 'text', xml.search('ARTICLE/BODY').first.to_plain_text
+     add_field 'title', xml.search('ARTICLE/HEADLINE').first.to_plain_text
 
    end
 
 Save this as articles.rb and call with these arguments:
    ruby articles.rb --dir /path/to/files --core test --port 8983 --host localhost
 
-This will process all files from dir to the Solr instance running on localhost:8983 and core test.
+This will process all files from dir and send them to the Solr instance running
+on localhost:8983 (using core 'test').
 
 Each file will be processed by the block in articles.rb. The files can be whatever you like
 since you control the parsing of those files.
@@ -32,9 +33,11 @@ since you control the parsing of those files.
 A commit to Solr is sent when all files are processed. You can also choose to send a commit
 at a specified interval of documents.
 
-Within the block, you have access to an +add+ method which allows to add a field to the document
-that will be sent to Solr. The first parameter to +add+ is the name of the field.
+Within the block, you have access to an +add_field+ method which allows to add a field to the document
+that will be sent to Solr. The first parameter to +add_field+ is the name of the field.
 The second one is the value for this field. For now, it must be a String.
+
+There is also an +add_param+ method available to pass extra parameters to Solr.
 
 == Command-line options
 [+dir+] Directory where the files to process are. Mandatory
