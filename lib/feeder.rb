@@ -77,6 +77,11 @@ class Feeder
       filepath = "#{@options.folder}/#{filename}"
       instance_exec(filepath, &block) if block.is_a? Proc
 
+      if @fields.empty?
+        puts "Skipping #{filename}"
+        next
+      end
+
       response = send_to_solr
       status = response['responseHeader']['status']
       if status == 0
@@ -112,7 +117,6 @@ class Feeder
   end
 
   def send_to_solr
-    message = @solr.message
-    @solr.update(message.add(@fields), @params)
+    @solr.update(@solr.message.add(@fields), @params)
   end
 end
