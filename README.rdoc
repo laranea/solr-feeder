@@ -4,10 +4,10 @@ Little script to feed documents to Solr from a set of files.
 
 == Example
 
-   require 'feeder'
+   require 'solr-feeder'
    require 'hpricot'
 
-   feeder = Feeder.new(ARGV)
+   feeder = SolrFeeder.from_args(ARGV)
    feeder.feed do |filepath|
 
      xml = open(filepath) { |f| Hpricot.XML(f) }
@@ -56,8 +56,10 @@ were made for them.
 [+core+ _CORE_] Solr core to use. Mandatory
 [+host+ _HOST_] Solr host to connect to. Default to 'localhost'
 [+port+ _PORT_] Solr port on host. Default to '8983'
+[+recursive+] Process files in sub directories. Default off
 [+max+ _NUM_] Max files to process from dir. Optional
 [+commit+ _NUM_] Send a commit at each nth file. Optional
+[+help+] Show usage information.
 
 == Requirements
 * rsolr
