@@ -37,12 +37,18 @@ module SolrFeeder
           next
         end
 
-        response = send_to_solr
-        status = response['responseHeader']['status']
-        if status == 0
-          puts "Adding #{path}"
-        else
-          puts "ERROR: status #{status} for #{path}"
+        begin
+          response = send_to_solr
+          status = response['responseHeader']['status']
+          if status == 0
+            puts "Adding #{path}"
+          else
+            puts "ERROR: status #{status} for #{path}"
+            next
+          end
+        rescue RSolr::RequestError => e
+          puts "ERROR: #{e} for #{path}"
+          next
         end
 
         total += 1
