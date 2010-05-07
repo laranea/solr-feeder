@@ -70,7 +70,8 @@ module SolrFeeder
     end
 
     def add_field(field, value)
-      @fields[field] = value
+      @fields[field] = [] unless @fields[field]
+      @fields[field] << value
     end
 
     def add_param(param, value)
