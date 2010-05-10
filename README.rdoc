@@ -7,8 +7,7 @@ Little script to feed documents to Solr from a set of files.
    require 'solr-feeder'
    require 'hpricot'
 
-   feeder = SolrFeeder.from_args(ARGV)
-   feeder.feed do |filepath|
+   SolrFeeder(ARGV) do |filepath|
 
      xml = open(filepath) { |f| Hpricot.XML(f) }
 

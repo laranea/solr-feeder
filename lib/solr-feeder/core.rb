@@ -2,15 +2,21 @@ require 'solr-feeder/options'
 require 'rsolr'
 require 'find'
 
+module Kernel
+
+  def SolrFeeder(args, &block)
+    options = SolrFeeder::Options.parse(args)
+    core = SolrFeeder::Core.new(options)
+    core.feed(&block)
+  end
+  
+end
+
 module SolrFeeder
 
-  def self.from_args(arguments)
-    Core.new(arguments)
-  end
-
   class Core
-    def initialize(arguments)
-      @options = SolrFeeder::Options.parse(arguments)
+    def initialize(options)
+      @options = options
     end
 
     def feed(&block)
