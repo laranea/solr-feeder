@@ -2,7 +2,7 @@ require 'rake/gempackagetask'
 
 spec = Gem::Specification.new do |s|
   s.name = 'solr-feeder'
-  s.version = '0.0.2'
+  s.version = '0.0.3'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README.rdoc']
   s.summary = 'Little script to feed documents to Solr from a set of files.'

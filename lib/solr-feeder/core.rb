@@ -1,6 +1,7 @@
 require 'solr-feeder/options'
 require 'rsolr'
 require 'find'
+require 'tmpdir'
 
 module Kernel
 
@@ -24,13 +25,29 @@ module SolrFeeder
       puts "Connecting to #{url}"
       @solr = RSolr.connect :url=> url
 
-      n = 0
-      total = 0
-      Find.find(@options.folder) do |path|
+      @n = 0
+      @total = 0
+
+      recurse_folder(@options.folder, &block)
+
+      if @n > 0
+        @solr.commit
+      end
+    
+      puts "#{@total} documents sent. Feed complete"
+    end
+
+    def recurse_folder(folder, &block)
+      Find.find(folder) do |path|
         next if path == '.' or path == '..'
         if FileTest.directory?(path)
           # Don't prune initial directory
           Find.prune if path != @options.folder and not @options.recursive
+          next
+        end
+
+        if @options.archives and path =~ /\.t(ar\.)?gz$/
+          process_archive(path, &block)
           next
         end
 
@@ -57,22 +74,32 @@ module SolrFeeder
           next
         end
 
-        total += 1
-        n += 1
-        if not @options.commit.nil? and n == @options.commit
+        @total += 1
+        @n += 1
+        if not @options.commit.nil? and @n == @options.commit
           puts "Committing"
           @solr.commit
-          n = 0
+          @n = 0
         end
 
-        break if not @options.max.nil? and total == @options.max
+        break if not @options.max.nil? and @total == @options.max
+      end
+    end
+
+    def process_archive(path, &block)
+      puts "Extracting #{path}"
+
+      tmp_dir = File.join(Dir.tmpdir, "#{File.basename(path)}-#{$$}")
+      FileUtils.rm_rf tmp_dir if File.directory?(tmp_dir)
+      Dir.mkdir(tmp_dir)
+
+      if system("tar xzf '#{path}' -C '#{tmp_dir}'")
+        recurse_folder(tmp_dir, &block)
+      else
+        puts "ERROR extracting #{path}"
       end
 
-      if n > 0
-        @solr.commit
-      end
-    
-      puts "#{total} documents sent. Feed complete"
+      FileUtils.rm_rf tmp_dir
     end
 
     def add_field(field, value)

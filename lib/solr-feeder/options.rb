@@ -51,6 +51,12 @@ module SolrFeeder
           @options.commit = commit
         end
 
+        # archives
+        @options.archives = false
+        opts.on("-a", "--archives", "Process files in tar.gz and tgz archives (default off)") do
+          @options.archives = true
+        end
+
         # help
         opts.on("-h", "--help",  "Show  this  message") do
           puts opts

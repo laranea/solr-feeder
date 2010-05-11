@@ -23,8 +23,8 @@ Little script to feed documents to Solr from a set of files.
 Save this as articles.rb and call with these arguments:
    ruby articles.rb --dir /path/to/files --core test --port 8983 --host localhost
 
-This will process all files from dir and send them to the Solr instance running
-on localhost:8983 (using core 'test').
+This will process all files from dir and send them to the 'test' core of the Solr instance
+running on localhost:8983.
 
 Each file will be processed by the block in articles.rb. The files can be whatever you like
 since you control the parsing of those files.
@@ -50,12 +50,17 @@ in the block and that file will be skipped.
 In the previous example, all files ending with .pdf will be skipped because no call to +add_field+
 were made for them.
 
+SolrFeeder can also handle tar.gz (and tgz) archives. You need to pass the --archives options and each
+archive encountered will be extracted and processed. Note that if you do not activate the --recursive
+switch while using --archives, only the files at the root of the archive will be processed.
+
 == Command-line options
 [+dir+] Directory where the files to process are. Mandatory
 [+core+ _CORE_] Solr core to use. Mandatory
 [+host+ _HOST_] Solr host to connect to. Default to 'localhost'
 [+port+ _PORT_] Solr port on host. Default to '8983'
 [+recursive+] Process files in sub directories. Default off
+[+archives+] Process files in tar.gz and tgz archives. Default off
 [+max+ _NUM_] Max files to process from dir. Optional
 [+commit+ _NUM_] Send a commit at each nth file. Optional
 [+help+] Show usage information.
