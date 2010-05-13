@@ -30,10 +30,7 @@ module SolrFeeder
 
       recurse_folder(@options.folder, &block)
 
-      if @n > 0
-        @solr.commit
-      end
-    
+      @solr.commit if @n > 0
       puts "#{@total} documents sent. Feed complete"
     end
 
@@ -53,7 +50,12 @@ module SolrFeeder
 
         @fields = {}
         @params = {}
-        instance_exec(path, &block) if block.is_a? Proc
+        begin
+          instance_exec(path, &block) if block.is_a? Proc
+        rescue Exception => e
+          puts "Skipping #{path} because of exception [#{e}]"
+          next
+        end
 
         if @fields.empty?
           puts "Skipping #{path}"

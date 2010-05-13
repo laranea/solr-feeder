@@ -41,7 +41,7 @@ There is also an +add_param+ method available to pass extra parameters to Solr.
 If you wanna prevent a file to be sent to Solr, just don't make any call to the +add_field+ method
 in the block and that file will be skipped.
 
-   feeder.feed do |filepath|
+   SolrFeeder(ARGV) do |filepath|
       next if filepath =~ /\.pdf$/
 
       # Processing for other files...
