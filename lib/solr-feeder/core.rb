@@ -71,8 +71,8 @@ module SolrFeeder
             puts "ERROR: status #{status} for #{path}"
             next
           end
-        rescue RSolr::RequestError => e
-          puts "ERROR: #{e} for #{path}"
+        rescue Exception => e
+          puts "Skipping #{path} because of exception while sending [#{e}]"
           next
         end
 
