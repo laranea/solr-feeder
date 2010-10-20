@@ -65,5 +65,13 @@ switch while using --archives, only the files at the root of the archive will be
 [+commit+ _NUM_] Send a commit at each nth file. Optional
 [+help+] Show usage information.
 
+== Installation
+
+Clone this repository and install the gem.
+
+   git clone git@github.com:pascaldimassimo/solr-feeder.git
+   cd solr-feeder
+   rake install
+
 == Requirements
 * rsolr
