@@ -1,6 +1,6 @@
 require 'rake/gempackagetask'
 
-version = '0.0.5'
+version = '0.0.6'
 
 spec = Gem::Specification.new do |s|
   s.name = 'solr-feeder'

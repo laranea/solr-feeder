@@ -52,9 +52,12 @@ module SolrFeeder
         @params = {}
         begin
           instance_exec(path, &block) if block.is_a? Proc
-        rescue Exception => e
+        rescue StandardError => e
           puts "Skipping #{path} because of exception [#{e}]"
           next
+        rescue SystemExit, Interrupt
+          puts "Interrupted"
+          break
         end
 
         if @fields.empty?
@@ -71,9 +74,12 @@ module SolrFeeder
             puts "ERROR: status #{status} for #{path}"
             next
           end
-        rescue Exception => e
+        rescue StandardError => e
           puts "Skipping #{path} because of exception while sending [#{e}]"
           next
+        rescue SystemExit, Interrupt
+          puts "Interrupted"
+          break
         end
 
         @total += 1
